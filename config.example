@@ -1,0 +1,32 @@
+# nn config
+#
+# Copy this to one of (later overrides earlier):
+#   $XDG_CONFIG_HOME/nn/config   (or ~/.config/nn/config)
+#   <repo>/config
+#
+# Format: key = value. Blank lines and #-comments are ignored.
+
+# Program used to open the note. Default: vim
+# When set to table-notes, the date header is inserted into cell B1 with
+# `table-notes -i B1 "<header>" <file>` instead of being written as plain text.
+text-editor = vim
+
+# Extra argument(s) passed to the editor when opening, e.g. --at B1 for
+# table-notes. Default: empty
+special-argument =
+
+# Where new notes are created. Default: ./
+note-location = ./
+
+# File extension for new notes, e.g. .ods for table-notes. Default: empty
+file-extension =
+
+# Write a date header into the new note. Default: true
+date-header = true
+
+# -----------------------------------------------------------------------------
+# Example: table-notes instead of vim
+# -----------------------------------------------------------------------------
+# text-editor = table-notes
+# special-argument = --at B1
+# file-extension = .ods
