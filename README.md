@@ -3,6 +3,11 @@
 A tiny shell script that creates a timestamped note, drops a date header in it,
 and opens it in your editor. Handy for quick journal entries.
 
+It was made to be used with any text editor, most likely Vim and specific rule to use with Table-notes
+
+Table-notes
+https://github.com/brunomerod/table-notes
+
 ## Usage
 
 ```sh
