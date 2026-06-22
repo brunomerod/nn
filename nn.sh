@@ -78,9 +78,51 @@ load_config() {
 #   /etc/nn/config                  system-wide
 #   $XDG_CONFIG_HOME/nn/config      per-user (falls back to ~/.config/nn/config)
 #   <repo>/config                   alongside this script
-load_config "/etc/nn/config"
-load_config "${XDG_CONFIG_HOME:-$HOME/.config}/nn/config"
-load_config "$SCRIPT_DIR/config"
+CONFIG_PATHS=(
+    "/etc/nn/config"
+    "${XDG_CONFIG_HOME:-$HOME/.config}/nn/config"
+    "$SCRIPT_DIR/config"
+)
+for cfg in "${CONFIG_PATHS[@]}"; do
+    load_config "$cfg"
+done
+
+# -----------------------------------------------------------------------------
+# Sanity checks
+# -----------------------------------------------------------------------------
+
+# Duplicate-config check. Every config that exists is loaded, with later paths
+# overriding earlier ones. When more than one is present, the values can clash,
+# so list them and tell the user which file actually wins (the last one found).
+FOUND_CONFIGS=()
+for cfg in "${CONFIG_PATHS[@]}"; do
+    [ -f "$cfg" ] && FOUND_CONFIGS+=("$cfg")
+done
+if [ "${#FOUND_CONFIGS[@]}" -gt 1 ]; then
+    WINNING_CONFIG="${FOUND_CONFIGS[${#FOUND_CONFIGS[@]} - 1]}"
+    echo "nn: multiple config files found:" >&2
+    for cfg in "${FOUND_CONFIGS[@]}"; do
+        echo "  - $cfg" >&2
+    done
+    echo "nn: using '$WINNING_CONFIG' (highest priority; its keys override the others)." >&2
+fi
+
+# Editor availability. If the configured editor is table-notes but it isn't
+# installed, fall back to plain vim (dropping the table-notes-specific options).
+# If, after that, no usable editor is installed, do nothing rather than fail
+# halfway through creating a note.
+if ! command -v "$TEXT_EDITOR" >/dev/null 2>&1; then
+    if [ "$(basename "$TEXT_EDITOR")" = "table-notes" ]; then
+        echo "nn: 'table-notes' is not installed; falling back to vim." >&2
+        TEXT_EDITOR="vim"
+        SPECIAL_ARGUMENT=""
+        FILE_EXTENSION=""
+    fi
+fi
+if ! command -v "$TEXT_EDITOR" >/dev/null 2>&1; then
+    echo "nn: editor '$TEXT_EDITOR' is not installed and no fallback is available; doing nothing." >&2
+    exit 1
+fi
 
 # -----------------------------------------------------------------------------
 # Build the filename: nn_<year>_<month>_<day>_<second-of-day>

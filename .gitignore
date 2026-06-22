@@ -1,0 +1,17 @@
+# Claude Code
+.claude/
+
+# Local nn config (config.example is tracked; the real config is not)
+/config
+
+# Notes created while testing the script by hand
+nn_*
+
+# Test scratch output
+tests/tmp/
+
+# Editor / OS cruft
+*.swp
+*.swo
+*~
+.DS_Store

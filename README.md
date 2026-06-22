@@ -47,6 +47,31 @@ mkdir -p ~/.config/nn && cp config.example ~/.config/nn/config
 | `file-extension` | *(empty)* | Extension for new notes, e.g. `.ods` for table-notes. |
 | `date-header` | `true` | Whether to write the date header. |
 
+## Sanity checks
+
+Before creating a note, `nn` runs two checks:
+
+- **Duplicate config files.** If more than one of the config paths above exists,
+  `nn` lists them and tells you which one wins (the highest-priority file, whose
+  keys override the others). All present files are still loaded in order.
+- **Editor availability.** If `text-editor` is set to `table-notes` but it isn't
+  installed, `nn` falls back to plain `vim` (dropping the table-notes-specific
+  `special-argument` and `file-extension`). If no usable editor is installed at
+  all, `nn` prints a message and does nothing instead of creating a stray note.
+
+## Tests
+
+A pure-bash test suite (no external framework) lives in [`tests/`](tests/):
+
+```sh
+./tests/run_tests.sh
+```
+
+It exercises filename format, the date header, every config key, config
+precedence, the duplicate-config warning, the table-notes branch, the
+table-notes→vim fallback, and the no-editor abort. See
+[`tests/README.md`](tests/README.md) for details.
+
 ## Using with table-notes
 
 [table-notes](../table-notes) is a table editor. Since a note is then a table,
